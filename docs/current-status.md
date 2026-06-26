@@ -20,4 +20,16 @@ and treated as stable. No UI; cross-platform CLI + core.
 ## Recent notes
 
 <!-- Append dated notes here, newest first: -->
-<!-- - YYYY-MM-DD: ... -->
+- 2026-06-26: Pushed to github.com/der-pepe-dev/fileaudit. Repo did not build on
+  arrival: bumped `Microsoft.Data.Sqlite` 9.0.0→10.0.9 and pinned patched
+  `SQLitePCLRaw.bundle_e_sqlite3` 3.0.3 (NU1903 GHSA-2m69-gcr7-jv3q); fixed 12 compile
+  errors (yield-in-catch in BasicRead/SQLite/Zip, FFmpeg arg-quote bug, stackalloc-in-loop
+  in PngTrailingData, ref-span-in-LINQ in AuditEngine). Build now clean.
+- 2026-06-26: `JsonlReporter` now honors the JSONL contract via `ContractJson.Options`
+  (snake_case keys, string enums OK/WARN/FAIL/SKIP + INFO/WARN/FAIL, mode audit/read,
+  DefectKind PascalCase, null optionals omitted, relaxed encoder). Previously emitted
+  PascalCase keys + int enums — a stable-contract violation. Verified against skip/read/fail.
+- 2026-06-26: Fixed status mis-classification: clean full read reported `status=SKIP`
+  instead of `OK`. `AuditEngine.Build` SKIP guard now requires `events.Count > 0` before the
+  all-`NoVerifierMatched` test, so a verifier that ran with zero findings → `OK`. Verified:
+  read-mode clean → OK; audit no-match → SKIP.<!-- - YYYY-MM-DD: ... -->

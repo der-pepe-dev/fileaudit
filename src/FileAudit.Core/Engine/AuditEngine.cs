@@ -58,11 +58,14 @@ public sealed class AuditEngine
 
         ReadOnlySpan<byte> headerSpan = new ReadOnlySpan<byte>(header, 0, headerLen);
 
-        // Applicable semantic verifiers (exclude basicread by name)
-        var applicable = _verifiers
-            .Where(v => v.Name != "basicread")
-            .Where(v => v.CanVerify(path, headerSpan))
-            .ToList();
+        // Applicable semantic verifiers (exclude basicread by name).
+        // Explicit loop: ReadOnlySpan cannot be captured in a LINQ lambda (CS8175).
+        var applicable = new List<IVerifier>();
+        foreach (var v in _verifiers)
+        {
+            if (v.Name == "basicread") continue;
+            if (v.CanVerify(path, headerSpan)) applicable.Add(v);
+        }
 
         bool readPerformed = false;
         bool ioFailed = false;
@@ -174,10 +177,17 @@ public sealed class AuditEngine
         bool ioFailed,
         bool? pluginsAfter)
     {
+        // SKIP means nothing meaningfully verified the file: no verifier ran, or the only
+        // outcome was "no verifier matched" AND no full read happened. A successful BasicRead
+        // (coverage=fullread) is real verification even when no semantic plugin matched.
+        bool nothingVerified =
+            !ran.Any() ||
+            (coverage != "fullread" && events.Count > 0 && events.All(e => e.Kind == DefectKind.NoVerifierMatched));
+
         FileStatus status =
             events.Any(e => e.Severity == Severity.Fail) ? FileStatus.Fail :
             events.Any(e => e.Severity == Severity.Warn) ? FileStatus.Warn :
-            (!ran.Any() || events.All(e => e.Kind == DefectKind.NoVerifierMatched)) ? FileStatus.Skip :
+            nothingVerified ? FileStatus.Skip :
             FileStatus.Ok;
 
         return new FileReport(
@@ -188,13 +198,23 @@ public sealed class AuditEngine
             VerifiersRun: ran,
             Events: events,
             Coverage: coverage,
-            ReadMode: options.Mode == ScanMode.Audit ? options.ReadMode.ToString().ToLowerInvariant() : null,
+            ReadMode: options.Mode == ScanMode.Audit ? FormatReadMode(options.ReadMode) : null,
             ReadPhase: readPhase,
             ReadPerformed: readPerformed,
             IoFailed: ioFailed,
             PluginsRanAfterIoError: pluginsAfter
         );
     }
+
+    // Contract read_mode tokens: never|unmatched|on-fail|always (hyphenated).
+    private static string FormatReadMode(ReadMode mode) => mode switch
+    {
+        ReadMode.Never => "never",
+        ReadMode.Unmatched => "unmatched",
+        ReadMode.OnFail => "on-fail",
+        ReadMode.Always => "always",
+        _ => mode.ToString().ToLowerInvariant()
+    };
 
     private static IEnumerable<string> ExpandInputs(IEnumerable<string> inputs)
     {

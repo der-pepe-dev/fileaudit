@@ -14,6 +14,7 @@ public sealed class BasicReadVerifier : IVerifier
         long offset = 0;
         byte[] buf = new byte[Math.Max(4096, options.ReadBufferBytes)];
 
+        DefectEvent? failure = null;
         try
         {
             using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -27,11 +28,14 @@ public sealed class BasicReadVerifier : IVerifier
         }
         catch (UnauthorizedAccessException ex)
         {
-            yield return new DefectEvent(Severity.Fail, DefectKind.AccessDenied, "io.access_denied", ex.Message, Location: $"offset={offset}", Tool: Name);
+            failure = new DefectEvent(Severity.Fail, DefectKind.AccessDenied, "io.access_denied", ex.Message, Location: $"offset={offset}", Tool: Name);
         }
         catch (Exception ex)
         {
-            yield return new DefectEvent(Severity.Fail, DefectKind.IoReadError, "io.read_failed", ex.Message, Location: $"offset={offset}", Tool: Name);
+            failure = new DefectEvent(Severity.Fail, DefectKind.IoReadError, "io.read_failed", ex.Message, Location: $"offset={offset}", Tool: Name);
         }
+
+        if (failure is not null)
+            yield return failure;
     }
 }

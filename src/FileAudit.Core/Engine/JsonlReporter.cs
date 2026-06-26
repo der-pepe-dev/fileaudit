@@ -6,7 +6,7 @@ namespace FileAudit.Core.Engine;
 public sealed class JsonlReporter : IReporter
 {
     private readonly StreamWriter _writer;
-    private readonly JsonSerializerOptions _json = new() { WriteIndented = false };
+    private readonly JsonSerializerOptions _json = ContractJson.Options;
 
     public JsonlReporter(string outPath)
     {

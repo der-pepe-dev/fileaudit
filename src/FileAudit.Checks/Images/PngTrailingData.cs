@@ -17,10 +17,10 @@ public static class PngTrailingData
         if (!StreamReadUtils.TryReadExactly(fs, sig)) return null;
         if (!sig.SequenceEqual(PngSig)) return null;
 
+        Span<byte> lenBuf = stackalloc byte[4];
+        Span<byte> typeBuf = stackalloc byte[4];
         while (true)
         {
-            Span<byte> lenBuf = stackalloc byte[4];
-            Span<byte> typeBuf = stackalloc byte[4];
             if (!StreamReadUtils.TryReadExactly(fs, lenBuf)) return null;
             if (!StreamReadUtils.TryReadExactly(fs, typeBuf)) return null;
 

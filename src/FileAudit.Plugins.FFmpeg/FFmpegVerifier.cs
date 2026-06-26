@@ -32,7 +32,7 @@ public sealed class FFmpegVerifier : IVerifier
         var psi = new ProcessStartInfo
         {
             FileName = ffmpeg,
-            Arguments = $"-hide_banner -v warning -i "{path}" -f null -",
+            Arguments = $"-hide_banner -v warning -i \"{path}\" -f null -",
             UseShellExecute = false,
             RedirectStandardError = true,
             RedirectStandardOutput = true,
