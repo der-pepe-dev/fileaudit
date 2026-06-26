@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FileAudit.Abstractions\FileAudit.Abstractions.csproj" />
+    <ProjectReference Include="..\FileAudit.Core\FileAudit.Core.csproj" />
+    <ProjectReference Include="..\FileAudit.Plugins.BasicRead\FileAudit.Plugins.BasicRead.csproj" />
+    <ProjectReference Include="..\FileAudit.Plugins.Zip\FileAudit.Plugins.Zip.csproj" />
+    <ProjectReference Include="..\FileAudit.Plugins.SQLite\FileAudit.Plugins.SQLite.csproj" />
+    <ProjectReference Include="..\FileAudit.Plugins.FFmpeg\FileAudit.Plugins.FFmpeg.csproj" />
+  </ItemGroup>
+</Project>

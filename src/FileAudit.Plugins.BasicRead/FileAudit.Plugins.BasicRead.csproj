@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FileAudit.Abstractions\FileAudit.Abstractions.csproj" />
+  </ItemGroup>
+</Project>
