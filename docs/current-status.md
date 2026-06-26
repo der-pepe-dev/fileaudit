@@ -20,6 +20,14 @@ and treated as stable. No UI; cross-platform CLI + core.
 ## Recent notes
 
 <!-- Append dated notes here, newest first: -->
+- 2026-06-27: Added first test project `tests/FileAudit.Tests` (TUnit on
+  Microsoft.Testing.Platform, net10.0), in the solution and run by CI (`dotnet test`). MTP's
+  new `dotnet test` mode is opted into via `global.json` `test.runner` (positional sln no
+  longer works — use `--solution`). 13 tests lock the contract: status
+  (OK/WARN/FAIL/SKIP incl. the two PR #1 regressions — clean fullread → OK, unmatched+clean
+  fallback read → OK), exit-code max across files, and JSONL shape (snake_case keys, string
+  enums, null optionals omitted, `read_mode` `on-fail` token, `read_mode` omitted in read mode).
+  Test infra: `FakeVerifier`, `CapturingReporter`, `TempFile` in TestDoubles.cs.
 - 2026-06-26: Pushed to github.com/der-pepe-dev/fileaudit. Repo did not build on
   arrival: bumped `Microsoft.Data.Sqlite` 9.0.0→10.0.9 and pinned patched
   `SQLitePCLRaw.bundle_e_sqlite3` 3.0.3 (NU1903 GHSA-2m69-gcr7-jv3q); fixed 12 compile

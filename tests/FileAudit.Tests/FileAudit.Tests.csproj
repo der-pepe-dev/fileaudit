@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+    <!-- TUnit runs on Microsoft.Testing.Platform. The new `dotnet test` experience is
+         opted into via repo-root dotnet.config; no VSTest bridge property here. -->
+    <!-- TUnit's source-generated/analyzer suggestions are warnings; product projects
+         keep TreatWarningsAsErrors=true (Directory.Build.props). -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TUnit" Version="1.56.35" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FileAudit.Core\FileAudit.Core.csproj" />
+    <ProjectReference Include="..\..\src\FileAudit.Abstractions\FileAudit.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
