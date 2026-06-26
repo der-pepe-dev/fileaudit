@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FileAudit.Core\FileAudit.Core.csproj" />
     <ProjectReference Include="..\..\src\FileAudit.Abstractions\FileAudit.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\FileAudit.Plugins.Image\FileAudit.Plugins.Image.csproj" />
   </ItemGroup>
 
 </Project>
