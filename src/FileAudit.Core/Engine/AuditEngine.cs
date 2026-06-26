@@ -180,7 +180,7 @@ public sealed class AuditEngine
         FileStatus status =
             events.Any(e => e.Severity == Severity.Fail) ? FileStatus.Fail :
             events.Any(e => e.Severity == Severity.Warn) ? FileStatus.Warn :
-            (!ran.Any() || events.All(e => e.Kind == DefectKind.NoVerifierMatched)) ? FileStatus.Skip :
+            (!ran.Any() || (events.Count > 0 && events.All(e => e.Kind == DefectKind.NoVerifierMatched))) ? FileStatus.Skip :
             FileStatus.Ok;
 
         return new FileReport(
