@@ -2,6 +2,7 @@ using FileAudit.Abstractions;
 using FileAudit.Core.Engine;
 using FileAudit.Plugins.BasicRead;
 using FileAudit.Plugins.FFmpeg;
+using FileAudit.Plugins.Image;
 using FileAudit.Plugins.SQLite;
 using FileAudit.Plugins.Zip;
 
@@ -78,6 +79,7 @@ var options = new ScanOptions(
 var verifiers = new IVerifier[]
 {
     new BasicReadVerifier(),
+    new ImageVerifier(),
     new ZipVerifier(),
     new SqliteVerifier(),
     new FFmpegVerifier(),

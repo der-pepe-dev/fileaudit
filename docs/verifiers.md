@@ -30,6 +30,15 @@ Emits:
 
 ---
 
+## Image verifier
+**Name:** `image`  
+Detects trailing bytes after the logical end of a PNG (`IEND`) or JPEG (`EOI`).
+
+Emits:
+- `WARN` `TrailingData` (`image.png.trailing_data`, `image.jpeg.trailing_data`)
+
+---
+
 ## ZIP verifier
 **Name:** `zip`  
 Reads every entry stream (CRC validation during read).

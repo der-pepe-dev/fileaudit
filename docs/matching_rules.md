@@ -3,13 +3,22 @@
 Stable verifier selection rules.
 
 Order when multiple match:
-1) zip
-2) sqlite
-3) ffmpeg
+1) image
+2) zip
+3) sqlite
+4) ffmpeg
 
 Unknown formats:
 - `status=SKIP` + `core.no_verifier_matched`
 - unless `--read=unmatched` triggers BasicRead
+
+## Image
+Extensions:
+- `.png`, `.jpg`, `.jpeg`
+
+Magic:
+- PNG `\x89PNG\r\n\x1a\n`
+- JPEG `\xFF\xD8\xFF`
 
 ## ZIP
 Extensions:
