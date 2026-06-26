@@ -20,8 +20,10 @@ and treated as stable. No UI; cross-platform CLI + core.
 ## Recent notes
 
 <!-- Append dated notes here, newest first: -->
-- 2026-06-27: Added first test project `tests/FileAudit.Tests` (xUnit, net10.0), in the
-  solution and run by CI (`dotnet test`). 13 tests lock the contract: status
+- 2026-06-27: Added first test project `tests/FileAudit.Tests` (TUnit on
+  Microsoft.Testing.Platform, net10.0), in the solution and run by CI (`dotnet test`). MTP's
+  new `dotnet test` mode is opted into via `global.json` `test.runner` (positional sln no
+  longer works — use `--solution`). 13 tests lock the contract: status
   (OK/WARN/FAIL/SKIP incl. the two PR #1 regressions — clean fullread → OK, unmatched+clean
   fallback read → OK), exit-code max across files, and JSONL shape (snake_case keys, string
   enums, null optionals omitted, `read_mode` `on-fail` token, `read_mode` omitted in read mode).

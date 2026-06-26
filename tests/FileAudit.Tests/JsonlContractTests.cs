@@ -26,7 +26,7 @@ public class JsonlContractTests
         }
     }
 
-    [Fact]
+    [Test]
     public async Task Keys_AreSnakeCase_NotPascalCase()
     {
         using var f = new TempFile();
@@ -36,12 +36,12 @@ public class JsonlContractTests
         var root = await FirstLine(f.Path, TestEngine.Options(), v);
 
         foreach (var key in new[] { "file", "utc", "mode", "status", "verifiers_run", "events" })
-            Assert.True(root.TryGetProperty(key, out _), $"missing key: {key}");
-        Assert.False(root.TryGetProperty("Status", out _), "PascalCase 'Status' leaked");
-        Assert.False(root.TryGetProperty("File", out _), "PascalCase 'File' leaked");
+            await Assert.That(root.TryGetProperty(key, out _)).IsTrue();
+        await Assert.That(root.TryGetProperty("Status", out _)).IsFalse();
+        await Assert.That(root.TryGetProperty("File", out _)).IsFalse();
     }
 
-    [Fact]
+    [Test]
     public async Task Enums_AreContractStrings()
     {
         using var f = new TempFile();
@@ -50,16 +50,16 @@ public class JsonlContractTests
 
         var root = await FirstLine(f.Path, TestEngine.Options(), v);
 
-        Assert.Equal("audit", root.GetProperty("mode").GetString());
-        Assert.Equal("FAIL", root.GetProperty("status").GetString());
+        await Assert.That(root.GetProperty("mode").GetString()).IsEqualTo("audit");
+        await Assert.That(root.GetProperty("status").GetString()).IsEqualTo("FAIL");
 
         var ev = root.GetProperty("events")[0];
-        Assert.Equal("FAIL", ev.GetProperty("severity").GetString());
-        Assert.Equal("ParseError", ev.GetProperty("kind").GetString()); // DefectKind: PascalCase per contract
-        Assert.Equal("archive.zip.parse_failed", ev.GetProperty("code").GetString());
+        await Assert.That(ev.GetProperty("severity").GetString()).IsEqualTo("FAIL");
+        await Assert.That(ev.GetProperty("kind").GetString()).IsEqualTo("ParseError"); // DefectKind: PascalCase per contract
+        await Assert.That(ev.GetProperty("code").GetString()).IsEqualTo("archive.zip.parse_failed");
     }
 
-    [Fact]
+    [Test]
     public async Task NullOptionalEventFields_AreOmitted()
     {
         using var f = new TempFile();
@@ -69,12 +69,11 @@ public class JsonlContractTests
         var root = await FirstLine(f.Path, TestEngine.Options(), v);
         var ev = root.GetProperty("events")[0];
 
-        Assert.False(ev.TryGetProperty("location", out _), "null location should be omitted");
-        // Tool was set on core events but not on TestEngine.Event(); this one has no tool.
-        Assert.False(ev.TryGetProperty("tool", out _), "null tool should be omitted");
+        await Assert.That(ev.TryGetProperty("location", out _)).IsFalse();
+        await Assert.That(ev.TryGetProperty("tool", out _)).IsFalse();
     }
 
-    [Fact]
+    [Test]
     public async Task ReadMode_OnFail_UsesHyphenatedToken()
     {
         using var f = new TempFile();
@@ -82,10 +81,10 @@ public class JsonlContractTests
 
         var root = await FirstLine(f.Path, TestEngine.Options(read: ReadMode.OnFail), v);
 
-        Assert.Equal("on-fail", root.GetProperty("read_mode").GetString());
+        await Assert.That(root.GetProperty("read_mode").GetString()).IsEqualTo("on-fail");
     }
 
-    [Fact]
+    [Test]
     public async Task ReadMode_OmittedInReadMode()
     {
         using var f = new TempFile();
@@ -93,7 +92,7 @@ public class JsonlContractTests
 
         var root = await FirstLine(f.Path, TestEngine.Options(mode: ScanMode.Read), basicread);
 
-        Assert.Equal("read", root.GetProperty("mode").GetString());
-        Assert.False(root.TryGetProperty("read_mode", out _), "read_mode should be omitted in read mode");
+        await Assert.That(root.GetProperty("mode").GetString()).IsEqualTo("read");
+        await Assert.That(root.TryGetProperty("read_mode", out _)).IsFalse();
     }
 }

@@ -4,7 +4,7 @@
 
 - Stack: C#/.NET 10 (CLI + library, cross-platform, no UI)
 - Environment: WSL2
-- Build: `dotnet build FileAudit.sln` | Test: `dotnet test FileAudit.sln`
+- Build: `dotnet build FileAudit.sln` | Test: `dotnet test` (TUnit on Microsoft.Testing.Platform; MTP mode opted in via `global.json` `test.runner` — pass a solution as `--solution FileAudit.sln`, not positionally)
 
 ## Startup
 
