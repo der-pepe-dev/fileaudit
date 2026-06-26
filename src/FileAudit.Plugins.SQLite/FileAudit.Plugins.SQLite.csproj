@@ -5,6 +5,8 @@
     <ProjectReference Include="..\FileAudit.Abstractions\FileAudit.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
+    <!-- Override transitive vulnerable native lib (GHSA-2m69-gcr7-jv3q): force patched bundle. -->
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
   </ItemGroup>
 </Project>

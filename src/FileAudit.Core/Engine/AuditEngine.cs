@@ -58,11 +58,14 @@ public sealed class AuditEngine
 
         ReadOnlySpan<byte> headerSpan = new ReadOnlySpan<byte>(header, 0, headerLen);
 
-        // Applicable semantic verifiers (exclude basicread by name)
-        var applicable = _verifiers
-            .Where(v => v.Name != "basicread")
-            .Where(v => v.CanVerify(path, headerSpan))
-            .ToList();
+        // Applicable semantic verifiers (exclude basicread by name).
+        // Explicit loop: ReadOnlySpan cannot be captured in a LINQ lambda (CS8175).
+        var applicable = new List<IVerifier>();
+        foreach (var v in _verifiers)
+        {
+            if (v.Name == "basicread") continue;
+            if (v.CanVerify(path, headerSpan)) applicable.Add(v);
+        }
 
         bool readPerformed = false;
         bool ioFailed = false;

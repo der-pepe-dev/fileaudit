@@ -27,6 +27,7 @@ public sealed class SqliteVerifier : IVerifier
 
     public async IAsyncEnumerable<DefectEvent> VerifyAsync(string path, ScanOptions options, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
     {
+        DefectEvent? result = null;
         try
         {
             var csb = new SqliteConnectionStringBuilder
@@ -40,12 +41,12 @@ public sealed class SqliteVerifier : IVerifier
 
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "PRAGMA integrity_check;";
-            var result = await cmd.ExecuteScalarAsync(ct);
+            var scalar = await cmd.ExecuteScalarAsync(ct);
 
-            string s = Convert.ToString(result) ?? "";
+            string s = Convert.ToString(scalar) ?? "";
             if (!string.Equals(s.Trim(), "ok", StringComparison.OrdinalIgnoreCase))
             {
-                yield return new DefectEvent(
+                result = new DefectEvent(
                     Severity.Fail,
                     DefectKind.IntegrityCheckFailed,
                     "db.sqlite.integrity_failed",
@@ -57,7 +58,7 @@ public sealed class SqliteVerifier : IVerifier
         }
         catch (Exception ex)
         {
-            yield return new DefectEvent(
+            result = new DefectEvent(
                 Severity.Fail,
                 DefectKind.ParseError,
                 "db.sqlite.open_failed",
@@ -65,5 +66,8 @@ public sealed class SqliteVerifier : IVerifier
                 Tool: Name
             );
         }
+
+        if (result is not null)
+            yield return result;
     }
 }
