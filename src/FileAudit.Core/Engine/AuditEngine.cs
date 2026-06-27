@@ -13,6 +13,12 @@ public sealed class AuditEngine
     {
         int maxExit = 0; // 0 OK/SKIP, 2 WARN, 3 FAIL
 
+        // A provided input that is neither a file nor a directory is a run-level error:
+        // fail loudly rather than silently producing an empty report.
+        var missing = FindMissingInputs(inputs);
+        if (missing.Count > 0)
+            throw new InputPathNotFoundException(missing);
+
         foreach (var path in ExpandInputs(inputs))
         {
             ct.ThrowIfCancellationRequested();
@@ -215,6 +221,10 @@ public sealed class AuditEngine
         ReadMode.Always => "always",
         _ => mode.ToString().ToLowerInvariant()
     };
+
+    /// <summary>Provided inputs that are neither a file nor a directory.</summary>
+    public static IReadOnlyList<string> FindMissingInputs(IEnumerable<string> inputs)
+        => inputs.Where(p => !File.Exists(p) && !Directory.Exists(p)).ToList();
 
     private static IEnumerable<string> ExpandInputs(IEnumerable<string> inputs)
     {
