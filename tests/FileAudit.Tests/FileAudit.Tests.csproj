@@ -21,6 +21,9 @@
     <ProjectReference Include="..\..\src\FileAudit.Core\FileAudit.Core.csproj" />
     <ProjectReference Include="..\..\src\FileAudit.Abstractions\FileAudit.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\FileAudit.Plugins.Image\FileAudit.Plugins.Image.csproj" />
+    <ProjectReference Include="..\..\src\FileAudit.Plugins.Zip\FileAudit.Plugins.Zip.csproj" />
+    <ProjectReference Include="..\..\src\FileAudit.Plugins.SQLite\FileAudit.Plugins.SQLite.csproj" />
+    <ProjectReference Include="..\..\src\FileAudit.Plugins.BasicRead\FileAudit.Plugins.BasicRead.csproj" />
   </ItemGroup>
 
 </Project>

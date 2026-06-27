@@ -69,6 +69,22 @@ internal sealed class TempFile : IDisposable
     }
 }
 
+/// <summary>Unique temp file path that deletes on dispose. Does not pre-create the file
+/// (unlike <see cref="TempFile"/>), so callers can create it themselves (e.g. SQLite).</summary>
+internal sealed class TempPath : IDisposable
+{
+    public string Path { get; }
+
+    public TempPath(string extension = ".tmp")
+        => Path = System.IO.Path.Combine(
+            System.IO.Path.GetTempPath(), $"fa-{Guid.NewGuid():N}{extension}");
+
+    public void Dispose()
+    {
+        try { if (File.Exists(Path)) File.Delete(Path); } catch { /* best effort */ }
+    }
+}
+
 internal static class TestEngine
 {
     public static ScanOptions Options(
@@ -88,4 +104,13 @@ internal static class TestEngine
 
     public static DefectEvent Event(Severity sev, DefectKind kind, string code)
         => new(sev, kind, code, $"{code} message");
+
+    /// <summary>Run a single verifier over a path and collect its events.</summary>
+    public static async Task<List<DefectEvent>> CollectAsync(IVerifier verifier, string path)
+    {
+        var events = new List<DefectEvent>();
+        await foreach (var e in verifier.VerifyAsync(path, Options(), CancellationToken.None))
+            events.Add(e);
+        return events;
+    }
 }
