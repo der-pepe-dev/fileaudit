@@ -109,7 +109,9 @@ Status is computed from the highest event severity, with a special case for “n
 - `0` → no file has `status=WARN` or `status=FAIL` (SKIP allowed)
 - `2` → at least one file is `WARN`, none are `FAIL`
 - `3` → at least one file is `FAIL`
-- `10` → run-level error (invalid args, cannot write report, unhandled exception)
+- `10` → run-level error (invalid args, an input path that does not exist, cannot write
+  report, unhandled exception). A nonexistent input path produces a stderr message and no
+  report line — it is never silently skipped.
 
 ---
 

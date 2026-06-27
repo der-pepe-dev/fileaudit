@@ -67,6 +67,16 @@ if (inputs.Count == 0)
     return 10;
 }
 
+// Validate inputs before opening the report file, so a typo'd path never clobbers an
+// existing report at --out with an empty one.
+var missingInputs = AuditEngine.FindMissingInputs(inputs);
+if (missingInputs.Count > 0)
+{
+    foreach (var p in missingInputs)
+        Console.Error.WriteLine($"Input path not found: {p}");
+    return 10;
+}
+
 var options = new ScanOptions(
     Mode: mode,
     ReadMode: readMode,
@@ -101,6 +111,12 @@ try
     // 3 = FAIL present
     // 10 = run-level error (handled by catch)
     return code;
+}
+catch (InputPathNotFoundException ex)
+{
+    foreach (var p in ex.Paths)
+        Console.Error.WriteLine($"Input path not found: {p}");
+    return 10;
 }
 catch (Exception ex)
 {
